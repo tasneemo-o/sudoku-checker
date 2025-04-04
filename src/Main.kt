@@ -253,5 +253,96 @@ fun checkSudoku(name: String, result: Boolean, correctResult: Boolean) {
 }
 
 fun isValidSudoku(grid: List<List<String>>): Boolean {
-    return false
+    // check if the entire grid is empty
+    if (grid.isEmpty())
+        return true
+
+    // check unequal dimensions
+    for (i in 0..<grid.size) {
+        if (grid[i].size != grid.size) {
+            return false
+        }
+    }
+
+    // check for invalid inputs
+    for (i in grid.indices) {
+        for (j in 0..<grid[i].size) {
+            if (grid[i][j] != "-") {
+                grid[i][j].toIntOrNull() ?: return false
+            }
+        }
+    }
+
+    // check if the size of the grid is squared or not
+    // ex1: for 16 --> subgridSize = 4
+    // so 4 * 4 = 16 then it's a squared number so 16 valid
+
+    // ex2: for 6  --> subgridSize (double) = 2.--  => 2 (int)
+    // so 2 * 2 = 4 != 6 then it's not a squared number so 6 not valid
+    val subgridSize = sqrt(grid.size.toDouble()).toInt()
+    if (subgridSize * subgridSize != grid.size) {
+        return false
+    }
+    // check for subgrid duplicates
+    for (subgridRow in 0..<subgridSize) {
+        for (subgridCol in 0..<subgridSize) {
+            val visited = mutableSetOf<String>()
+
+            for (i in 0..<subgridSize) {
+                for (j in 0..<subgridSize) {
+                    // actual subgrid row and column
+                    val row = subgridRow * subgridSize + i        // actually for this law i didn't get it fully by myself,
+                    val col = subgridCol * subgridSize + j        // i took some help here
+
+                    if (grid[row][col] != "-") {
+                        if (grid[row][col] in visited) {
+                            return false
+                        }
+                        visited.add(grid[row][col])
+                    }
+                }
+            }
+        }
+    }
+
+    // check for row duplicates
+    for (i in grid.indices) {
+        val visited = mutableSetOf<String>()
+        for (j in 0..<grid[i].size) {
+            if (grid[i][j] != "-") {
+                if (grid[i][j] in visited) {
+                    return false
+                }
+                visited.add(grid[i][j])
+            }
+
+        }
+    }
+
+    // check for column duplicates
+    for (i in grid.indices) {
+        val visited = mutableSetOf<String>()
+        for (j in 0..<grid[i].size) {
+            if (grid[j][i] != "-") {
+                if (grid[j][i] in visited) {
+                    return false
+                }
+                visited.add(grid[j][i])
+            }
+
+        }
+    }
+
+    // check if any number is out of bounds
+    for (i in grid.indices) {
+        for (j in 0..<grid[i].size) {
+            if (grid[i][j] != "-") {
+                val num = grid[i][j].toInt()
+                if (num < 1 || num > grid.size) {
+                    return false
+                }
+            }
+        }
+    }
+    return true
 }
