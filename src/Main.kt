@@ -2,26 +2,17 @@ import kotlin.math.sqrt
 
 fun main() {
 
+    // valid test cases
     // valid 4x4
-    val valid4x4SudokuGrid = listOf(
+    val validGrid4x4 = listOf(
         listOf("1", "-", "-", "-"),
         listOf("3", "-", "1", "2"),
         listOf("-", "1", "-", "-"),
         listOf("-", "3", "2", "1")
     )
 
-    // invalid 6x6
-    val invalid6x6SudokuGrid = listOf(
-        listOf("1", "2", "3", "4", "5", "6"),
-        listOf("4", "5", "6", "1", "2", "3"),
-        listOf("2", "3", "4", "5", "6", "1"),
-        listOf("5", "6", "1", "2", "3", "4"),
-        listOf("3", "4", "5", "6", "1", "2"),
-        listOf("6", "1", "2", "3", "4", "5")
-    )
-
     // valid 9x9
-    val valid9x9SudokuGrid = listOf(
+    val validGrid9x9 = listOf(
         listOf("5", "3", "-", "-", "7", "-", "-", "-", "-"),
         listOf("6", "-", "-", "1", "9", "5", "-", "-", "-"),
         listOf("-", "9", "8", "-", "-", "-", "-", "6", "-"),
@@ -35,7 +26,7 @@ fun main() {
 
     // valid customized 16x16
     // any squared number as a grid size is covered in this code: (valid for 9x9, 16x16, 25x25 etc.)
-    val custom16x16SudokuGrid = listOf(
+    val validGrid16x16 = listOf(
         listOf("1", "2", "3", "4", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"),
         listOf("-", "-", "-", "-", "5", "6", "7", "8", "-", "-", "-", "-", "-", "-", "-", "-"),
         listOf("-", "-", "-", "-", "-", "-", "-", "-", "9", "10", "11", "12", "-", "-", "-", "-"),
@@ -54,10 +45,31 @@ fun main() {
         listOf("-", "-", "16", "-", "-", "-", "4", "-", "-", "-", "8", "-", "-", "-", "12", "-")
     )
 
-    // invalid: unequal dimensions
-    val unequalDimensionsGrid = listOf(
+    // empty grid
+    val emptyGrid = mutableListOf<MutableList<String>>()
+
+    // grid with empty cells
+    val gridWithEmptyCells = listOf(
+        listOf("1", "-", "3", "4"),  // empty cell is represented by "-"
+        listOf("3", "4", "1", "2"),
+        listOf("-", "1", "4", "3"),
+        listOf("4", "3", "2", "-")
+    )
+
+    //
+    val invalidGridNonSquareSize6x6 = listOf(
+        listOf("1", "2", "3", "4", "5", "6"),
+        listOf("4", "5", "6", "1", "2", "3"),
+        listOf("2", "3", "4", "5", "6", "1"),
+        listOf("5", "6", "1", "2", "3", "4"),
+        listOf("3", "4", "5", "6", "1", "2"),
+        listOf("6", "1", "2", "3", "4", "5")
+    )
+
+    // invalid - unequal dimensions
+    val invalidGridUnequalDimensions = listOf(
         listOf("5", "3", "-", "-", "7", "-", "-", "-", "-"),
-        listOf("6", "-", "-", "1", "9", "5", "-", "-"),             // 8 elements
+        listOf("6", "-", "-", "1", "9", "5", "-", "-"),             // 8 elements only in this row
         listOf("-", "9", "8", "-", "-", "-", "-", "6", "-"),
         listOf("8", "-", "-", "-", "6", "-", "-", "-", "3"),
         listOf("4", "-", "-", "8", "-", "3", "-", "-", "1"),
@@ -68,7 +80,7 @@ fun main() {
     )
 
     // invalid: a row has duplicated values
-    val invalidWithRowDuplicated = listOf(
+    val invalidGridRowDuplicate = listOf(
         listOf("5", "3", "-", "-", "7", "-", "-", "-", "-"),
         listOf("6", "-", "-", "1", "9", "5", "-", "-", "-"),
         listOf("-", "9", "8", "-", "-", "-", "-", "6", "-"),
@@ -81,7 +93,7 @@ fun main() {
     )
 
     // invalid: a column has duplicated values
-    val invalidWithColDuplicated = listOf(
+    val invalidGridColumnDuplicate = listOf(
         listOf("5", "3", "-", "-", "7", "-", "-", "-", "-"),
         listOf("6", "-", "-", "1", "9", "5", "-", "-", "-"), // 6 is duplicated in column 1
         listOf("-", "9", "8", "-", "-", "-", "-", "6", "-"),
@@ -91,32 +103,6 @@ fun main() {
         listOf("-", "1", "-", "-", "-", "-", "2", "8", "-"),
         listOf("-", "-", "-", "4", "1", "9", "-", "-", "5"),
         listOf("6", "-", "-", "-", "8", "-", "-", "7", "9") // 6 is duplicated in column 1
-    )
-
-    // invalid: there are values out of bounds 1-n  (greater than n)
-    val outOfBoundsGreaterThanN = listOf(
-        listOf("5", "3", "-", "-", "7", "-", "-", "-", "-"),
-        listOf("6", "-", "-", "1", "9", "5", "-", "-", "-"),
-        listOf("-", "9", "8", "-", "-", "-", "-", "6", "-"),
-        listOf("8", "-", "-", "-", "6", "-", "-", "-", "3"),
-        listOf("4", "-", "-", "8", "-", "3", "-", "-", "1"),
-        listOf("7", "-", "-", "-", "2", "-", "-", "-", "6"),
-        listOf("-", "6", "-", "-", "10", "-", "2", "8", "-"), // 10 is out of bounds
-        listOf("-", "-", "-", "4", "1", "9", "-", "-", "5"),
-        listOf("-", "-", "-", "-", "8", "-", "-", "7", "9")
-    )
-
-    // invalid: there are values out of bounds 1-n  (smaller than 1)
-    val outOfBoundsSmallerThanN = listOf(
-        listOf("5", "3", "-", "-", "7", "-", "-", "-", "-"),
-        listOf("6", "-", "-", "1", "9", "5", "-", "-", "-"),
-        listOf("-", "9", "8", "-", "-", "-", "-", "6", "-"),
-        listOf("8", "-", "-", "-", "6", "-", "-", "-", "3"),
-        listOf("4", "-", "-", "8", "-", "3", "-", "-", "1"),
-        listOf("7", "-", "-", "-", "2", "-", "-", "-", "6"),
-        listOf("-", "6", "-", "-", "-1", "-", "2", "8", "-"), // -1 is out of bounds
-        listOf("-", "-", "-", "4", "1", "9", "-", "-", "5"),
-        listOf("-", "-", "-", "-", "8", "-", "-", "7", "9")
     )
 
     val invalidSubgrid9x9 = listOf(
@@ -131,7 +117,24 @@ fun main() {
         listOf("-", "-", "-", "-", "8", "-", "-", "7", "9")
     )
     val invalidSubgrid16x16 = listOf(
-        listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "9", "11", "12", "13", "14", "15", "16"),  // Duplicate "9" in subgrid
+        listOf(
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "9",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16"
+        ),  // Duplicate "9" in subgrid
         listOf("5", "6", "7", "8", "1", "2", "3", "4", "13", "14", "15", "16", "9", "10", "11", "12"),
         listOf("9", "10", "11", "12", "13", "14", "15", "16", "1", "2", "3", "4", "5", "6", "7", "8"),
         listOf("13", "14", "15", "16", "9", "10", "11", "12", "5", "6", "7", "8", "1", "2", "3", "4"),
@@ -148,7 +151,34 @@ fun main() {
         listOf("12", "11", "10", "9", "16", "15", "14", "13", "4", "3", "2", "1", "8", "7", "6", "5"),
         listOf("16", "15", "14", "13", "12", "11", "10", "9", "8", "7", "6", "5", "4", "3", "2", "1")
     )
-    val invalidInput = listOf(
+
+    // invalid: there are values out of bounds 1-n  (greater than n)
+    val invalidGridValueTooLarge = listOf(
+        listOf("5", "3", "-", "-", "7", "-", "-", "-", "-"),
+        listOf("6", "-", "-", "1", "9", "5", "-", "-", "-"),
+        listOf("-", "9", "8", "-", "-", "-", "-", "6", "-"),
+        listOf("8", "-", "-", "-", "6", "-", "-", "-", "3"),
+        listOf("4", "-", "-", "8", "-", "3", "-", "-", "1"),
+        listOf("7", "-", "-", "-", "2", "-", "-", "-", "6"),
+        listOf("-", "6", "-", "-", "10", "-", "2", "8", "-"), // 10 is out of bounds
+        listOf("-", "-", "-", "4", "1", "9", "-", "-", "5"),
+        listOf("-", "-", "-", "-", "8", "-", "-", "7", "9")
+    )
+
+    // invalid: there are values out of bounds 1-n  (smaller than 1)
+    val invalidGridValueTooSmall = listOf(
+        listOf("5", "3", "-", "-", "7", "-", "-", "-", "-"),
+        listOf("6", "-", "-", "1", "9", "5", "-", "-", "-"),
+        listOf("-", "9", "8", "-", "-", "-", "-", "6", "-"),
+        listOf("8", "-", "-", "-", "6", "-", "-", "-", "3"),
+        listOf("4", "-", "-", "8", "-", "3", "-", "-", "1"),
+        listOf("7", "-", "-", "-", "2", "-", "-", "-", "6"),
+        listOf("-", "6", "-", "-", "-1", "-", "2", "8", "-"), // -1 is out of bounds
+        listOf("-", "-", "-", "4", "1", "9", "-", "-", "5"),
+        listOf("-", "-", "-", "-", "8", "-", "-", "7", "9")
+    )
+
+    val invalidGridNonNumericInput  = listOf(
         listOf("a", "3", "-", "-", ",", "-", "-", "-", "-"),   // a is invalid digit
         listOf("6", "-", "-", "1", "9", "5", "-", "-", "-"),
         listOf("-", "9", "8", "-", "-", "-", "-", "6", "-"),
@@ -160,83 +190,77 @@ fun main() {
         listOf("-", "-", "-", "-", "8", "-", "-", "7", "9")
     )
 
-    val gridWithEmptyCells = listOf(
-        listOf("1", "-", "3", "4"),  // empty cell is represented by "-"
-        listOf("3", "4", "1", "2"),
-        listOf("-", "1", "4", "3"),
-        listOf("4", "3", "2", "-")
-    )
-
-    val emptyGrid = mutableListOf<MutableList<String>>()
-
+    // valid tests
     checkSudoku(
-        name = "a valid 4x4 sudoku grid",
-        result = isValidSudoku(valid4x4SudokuGrid),
+        name = "should accept valid 4x4 sudoku grid",
+        result = isValidSudoku(validGrid4x4),
         correctResult = true
     )
     checkSudoku(
-        name = "an invalid 6x6 sudoku grid",
-        result = isValidSudoku(invalid6x6SudokuGrid),
-        correctResult = false
-    )
-    checkSudoku(
-        name = "a valid 9x9 sudoku grid",
-        result = isValidSudoku(valid9x9SudokuGrid),
+        name = "should accept valid 9x9 sudoku grid",
+        result = isValidSudoku(validGrid9x9),
         correctResult = true
     )
     checkSudoku(
-        name = "a valid 16x16 sudoku grid",
-        result = isValidSudoku(custom16x16SudokuGrid),
+        name = "should accept valid 16x16 sudoku grid",
+        result = isValidSudoku(validGrid16x16),
         correctResult = true
     )
     checkSudoku(
-        name = "a grid can be empty",
+        name = "should accept empty grid",
         result = isValidSudoku(emptyGrid),
         correctResult = true
     )
     checkSudoku(
-        name = "the grid can contain empty cells",
+        name = "should accept grid with empty cells",
         result = isValidSudoku(gridWithEmptyCells),
         correctResult = true
     )
+
+    // invalid tests
     checkSudoku(
-        name = "the number of rows should be equal to the number of columns",
-        result = isValidSudoku(unequalDimensionsGrid),
+        name = "should reject 6x6 grid (not a perfect square size)",
+        result = isValidSudoku(invalidGridNonSquareSize6x6),
         correctResult = false
     )
     checkSudoku(
-        name = "a number appears in one row more than once",
-        result = isValidSudoku(invalidWithRowDuplicated),
+        name = "should reject grid with unequal row/column dimensions",
+        result = isValidSudoku(invalidGridUnequalDimensions),
         correctResult = false
     )
     checkSudoku(
-        name = "a number appears in one column more than once",
-        result = isValidSudoku(invalidWithColDuplicated),
+        name = "should reject grid with duplicate value in row",
+        result = isValidSudoku(invalidGridRowDuplicate),
         correctResult = false
     )
     checkSudoku(
-        name = "a number is out of bounds (greater than n)",
-        result = isValidSudoku(outOfBoundsGreaterThanN),
+        name = "should reject grid with duplicate value in column",
+        result = isValidSudoku(invalidGridColumnDuplicate),
         correctResult = false
     )
     checkSudoku(
-        name = "a number is out of bounds (smaller than n)",
-        result = isValidSudoku(outOfBoundsSmallerThanN),
+        name = "should reject grid with values greater than grid size",
+        result = isValidSudoku(invalidGridValueTooLarge),
         correctResult = false
     )
     checkSudoku(
-        name = "a number appears in the same subgrid more than once",
+        name = "should reject grid with negative values",
+        result = isValidSudoku(invalidGridValueTooSmall),
+        correctResult = false
+    )
+    checkSudoku(
+        name = "should reject grid with duplicate in 3x3 subgrid (9x9)",
         result = isValidSudoku(invalidSubgrid9x9),
         correctResult = false
     )
     checkSudoku(
-        name = "a number appears in the same subgrid more than once",
+        name = "should reject grid with duplicate in 4x4 subgrid (16x16)",
         result = isValidSudoku(invalidSubgrid16x16),
         correctResult = false
     )
     checkSudoku(
-        name = "invalid input",
-        result = isValidSudoku(invalidInput),
+        name = "should reject grid with non-numeric characters",
+        result = isValidSudoku(invalidGridNonNumericInput),
         correctResult = false
     )
 }
@@ -291,7 +315,8 @@ fun isValidSudoku(grid: List<List<String>>): Boolean {
             for (i in 0..<subgridSize) {
                 for (j in 0..<subgridSize) {
                     // actual subgrid row and column
-                    val row = subgridRow * subgridSize + i        // actually for this law i didn't get it fully by myself,
+                    val row =
+                        subgridRow * subgridSize + i        // actually for this law i didn't get it fully by myself,
                     val col = subgridCol * subgridSize + j        // i took some help here
 
                     if (grid[row][col] != "-") {
