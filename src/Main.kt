@@ -25,7 +25,6 @@ fun main() {
     )
 
     // valid customized 16x16
-    // any squared number as a grid size is covered in this code: (valid for 9x9, 16x16, 25x25 etc.)
     val validGrid16x16 = listOf(
         listOf("1", "2", "3", "4", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"),
         listOf("-", "-", "-", "-", "5", "6", "7", "8", "-", "-", "-", "-", "-", "-", "-", "-"),
@@ -117,24 +116,7 @@ fun main() {
         listOf("-", "-", "-", "-", "8", "-", "-", "7", "9")
     )
     val invalidSubgrid16x16 = listOf(
-        listOf(
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "9",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16"
-        ),  // Duplicate "9" in subgrid
+        listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "9", "11", "12", "13", "14", "15", "16"),  // Duplicate "9" in subgrid
         listOf("5", "6", "7", "8", "1", "2", "3", "4", "13", "14", "15", "16", "9", "10", "11", "12"),
         listOf("9", "10", "11", "12", "13", "14", "15", "16", "1", "2", "3", "4", "5", "6", "7", "8"),
         listOf("13", "14", "15", "16", "9", "10", "11", "12", "5", "6", "7", "8", "1", "2", "3", "4"),
@@ -178,7 +160,7 @@ fun main() {
         listOf("-", "-", "-", "-", "8", "-", "-", "7", "9")
     )
 
-    val invalidGridNonNumericInput  = listOf(
+    val invalidGridNonNumericInput = listOf(
         listOf("a", "3", "-", "-", ",", "-", "-", "-", "-"),   // a is invalid digit
         listOf("6", "-", "-", "1", "9", "5", "-", "-", "-"),
         listOf("-", "9", "8", "-", "-", "-", "-", "6", "-"),
@@ -298,11 +280,6 @@ fun isValidSudoku(grid: List<List<String>>): Boolean {
     }
 
     // check if the size of the grid is squared or not
-    // ex1: for 16 --> subgridSize = 4
-    // so 4 * 4 = 16 then it's a squared number so 16 valid
-
-    // ex2: for 6  --> subgridSize (double) = 2.--  => 2 (int)
-    // so 2 * 2 = 4 != 6 then it's not a squared number so 6 not valid
     val subgridSize = sqrt(grid.size.toDouble()).toInt()
     if (subgridSize * subgridSize != grid.size) {
         return false
@@ -314,10 +291,9 @@ fun isValidSudoku(grid: List<List<String>>): Boolean {
 
             for (i in 0..<subgridSize) {
                 for (j in 0..<subgridSize) {
-                    // actual subgrid row and column
                     val row =
-                        subgridRow * subgridSize + i        // actually for this law i didn't get it fully by myself,
-                    val col = subgridCol * subgridSize + j        // i took some help here
+                        subgridRow * subgridSize + i
+                    val col = subgridCol * subgridSize + j
 
                     if (grid[row][col] != "-") {
                         if (grid[row][col] in visited) {
